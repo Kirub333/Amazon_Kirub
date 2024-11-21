@@ -3,31 +3,44 @@ import axios from "axios";
 
 import classes from "./Product.module.css";
 import ProductCard from "./ProductCard";
+import Loader from "../Loader/Loder";
 
 function Product() {
   const [products, setProducts] = useState([]);
+  const [isLoading, setisLoading] = useState(false);
 
   useEffect(() => {
+    setisLoading(true);
     axios
       .get("https://fakestoreapi.com/products")
       .then((res) => {
         setProducts(res.data);
+        setisLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setisLoading(false);
       });
   }, []);
 
   return (
-    <section className={classes.products_container}>
-      {products.length > 0 ? (
-        products.map((singleProduct) => (
-          <ProductCard product={singleProduct} key={singleProduct.id} />
-        ))
+    <>
+      {isLoading ? (
+        <Loader />
       ) : (
-        <p>Loading products...</p> // Display a loading message while products are being fetched
+        <section className={classes.products_container}>
+          {products?.map((singleProduct) => {
+            return (
+              <ProductCard
+                renderAdd={true}
+                product={singleProduct}
+                key={singleProduct.id}
+              />
+            );
+          })}
+        </section>
       )}
-    </section>
+    </>
   );
 }
 
