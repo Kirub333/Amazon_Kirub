@@ -4,6 +4,7 @@ import { SlLocationPin } from "react-icons/sl";
 import { BsSearch } from "react-icons/bs";
 import amazon_letter_logo from "../../assets/images/logo/amazon_letter_white_logo.png";
 import { BiCart } from "react-icons/bi";
+import LowerHeader from "./LowerHeader";
 
 function Header() {
   return (
@@ -69,6 +70,7 @@ function Header() {
           </div>
         </div>
       </section>
+      <LowerHeader />
     </section>
   );
 }
