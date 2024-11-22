@@ -4,30 +4,45 @@ import CurrencyFormat from "../CurrencyFormat/CurrencyFormat";
 import classes from "./Product.module.css";
 import { Link } from "react-router-dom";
 
-function ProductCard({ product }) {
-  const { image, title, id, rating, price, description } = product;
+function ProductCard({ product, flex, renderDesc }) {
+  const { image, title, id, rating, price, description } = product || {};
 
   return (
-    <div className={`${classes.card__container}`}>
+    <div
+      className={`${classes.card__container} ${
+        flex ? classes.product__flexed : ""
+      }`}
+    >
       <Link to={`/products/${id}`}>
-        <img src={image} alt="" className={classes.img_container} />
+        <img
+          src={image}
+          alt={title || "Product Image"}
+          className={classes.img_container}
+        />
       </Link>
       <div>
-        <h3>{title}</h3>
-
+        <h3>{title || "No title available"}</h3>
+        {renderDesc && <div style={{ maxWidth: "750px" }}>{description}</div>}
         <div className={classes.rating}>
-          {/* rating */}
-          <Rating value={rating.rate} precision={0.1} />
-          {/*count  */}
-          <small>{rating.count}</small>
+          {/* Check if rating exists */}
+          {rating ? (
+            <>
+              <Rating value={rating.rate || 0} precision={0.1} />
+              <small>{rating.count || 0} reviews</small>
+            </>
+          ) : (
+            <p>No rating available</p>
+          )}
         </div>
-
         <div>
           {/* price */}
-          <CurrencyFormat amount={price} />
+          {price ? (
+            <CurrencyFormat amount={price} />
+          ) : (
+            <p>Price not available</p>
+          )}
         </div>
-
-        <button className={classes.button}>add to cart</button>
+        <button className={classes.button}>Add to Cart</button>
       </div>
     </div>
   );
