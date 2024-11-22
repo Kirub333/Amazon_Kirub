@@ -11,16 +11,18 @@ const Results = () => {
   const { categoryName } = useParams();
   const [results, setResults] = useState([]);
   const [isLoading, setisLoading] = useState(false);
+
   useEffect(() => {
-    setisLoading(true);
+    setisLoading(true); // Start loading
     axios
       .get(`${BaseURL}/products/category/${categoryName}`)
       .then((res) => {
         setResults(res.data);
+        setisLoading(false); // Stop loading after success
       })
       .catch((err) => {
-        console.log(err);
-        setisLoading(false);
+        console.error(err);
+        setisLoading(false); // Stop loading after error
       });
   }, [categoryName]);
 

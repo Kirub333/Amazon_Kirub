@@ -9,14 +9,7 @@ import Loader from "../../components/Loader/Loder";
 
 const ProductDetail = () => {
   const { productId } = useParams();
-  const [product, setproduct] = useState({
-    image: "",
-    title: "Loading...",
-    id: "",
-    rating: { rate: 0, count: 0 },
-    price: 0,
-    description: "",
-  });
+  const [product, setproduct] = useState({});
   const [isLoading, setisLoading] = useState(false);
   useEffect(() => {
     setisLoading(true);
@@ -30,7 +23,7 @@ const ProductDetail = () => {
         console.log(err);
         setisLoading(false);
       });
-  }, []);
+  }, [productId]);
   return (
     <LayOut>
       {isLoading ? <Loader /> : <ProductCard product={product} />}
