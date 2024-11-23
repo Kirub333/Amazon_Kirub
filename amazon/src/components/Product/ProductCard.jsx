@@ -1,14 +1,22 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import Rating from "@mui/material/Rating";
 import CurrencyFormat from "../CurrencyFormat/CurrencyFormat";
 import classes from "./Product.module.css";
 import { Link } from "react-router-dom";
 import { Type } from "../../Utility/action.type";
-import { DataContext } from "../DataProvider/DataProvider";
+import { DataContext } from "../../components/DataProvider/DataProvider";
+import { BsFillCartXFill } from "react-icons/bs";
 
-function ProductCard({ product, flex, renderDesc }) {
-  const { image, title, id, rating, price, description } = product || {};
-
+function ProductCard({
+  product,
+  flex,
+  renderDesc,
+  renderAdd,
+  showRemoveItem,
+  itemAmount,
+  total,
+}) {
+  const { image, title, id, rating, price, description } = product;
   const [state, dispatch] = useContext(DataContext);
 
   const addToCart = () => {
@@ -25,6 +33,13 @@ function ProductCard({ product, flex, renderDesc }) {
     });
   };
 
+  const removeItemImmediately = () => {
+    dispatch({
+      type: Type.REMOVE_ITEM_IMMEDIATELY,
+      id,
+    });
+  };
+
   return (
     <div
       className={`${classes.card__container} ${
@@ -32,37 +47,55 @@ function ProductCard({ product, flex, renderDesc }) {
       }`}
     >
       <Link to={`/products/${id}`}>
-        <img
-          src={image}
-          alt={title || "Product Image"}
-          className={classes.img_container}
-        />
+        <img src={image} alt="" className={classes.img_container} />
       </Link>
       <div>
-        <h3>{title || "No title available"}</h3>
+        <h3>{title}</h3>
         {renderDesc && <div style={{ maxWidth: "750px" }}>{description}</div>}
         <div className={classes.rating}>
-          {/* Check if rating exists */}
-          {rating ? (
-            <>
-              <Rating value={rating.rate || 0} precision={0.1} />
-              <small>{rating.count || 0} reviews</small>
-            </>
-          ) : (
-            <p>No rating available</p>
+          <Rating value={rating?.rate} precision={0.1} />
+          <small>{rating?.count}</small>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <CurrencyFormat amount={price} />
+          {itemAmount && (
+            <p style={{ fontWeight: "500", color: "var(--primary-color)" }}>
+              Quantity: {itemAmount}
+            </p>
+          )}
+          {total && (
+            <p style={{ fontWeight: "500", color: "var(--primary-color)" }}>
+              Total: ${price * itemAmount}
+            </p>
+          )}
+          {showRemoveItem && (
+            <button
+              className={classes.button}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "7px",
+                padding: "5px",
+              }}
+              onClick={removeItemImmediately}
+            >
+              <BsFillCartXFill size={20} />
+              Remove Item
+            </button>
           )}
         </div>
-        <div>
-          {/* price */}
-          {price ? (
-            <CurrencyFormat amount={price} />
-          ) : (
-            <p>Price not available</p>
-          )}
-        </div>
-        <button className={classes.button} onClick={addToCart}>
-          Add to Cart
-        </button>
+        {renderAdd && (
+          <button className={classes.button} onClick={addToCart}>
+            Add to Cart
+          </button>
+        )}
       </div>
     </div>
   );
