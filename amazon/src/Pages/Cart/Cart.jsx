@@ -13,7 +13,7 @@ function Cart() {
   const [{ user, basket }, dispatch] = useContext(DataContext);
 
   const total = basket.reduce(
-    (amount, item) => item.price * item.amount + amount,
+    (amount, item) => amount + item.price * (item.amount || 1),
     0
   );
 
@@ -43,7 +43,7 @@ function Cart() {
             }}
           >
             <div>
-              <h2>Hello {user?.email?.split("@")[0] || "Guest"}</h2>
+              <h2>Hello {user?.email?.split("@")[0]}</h2>
               <h3>Your shopping basket</h3>
             </div>
             <div style={{ marginRight: "10px" }}>
@@ -62,12 +62,11 @@ function Cart() {
 
           <hr />
           {basket.length === 0 ? (
-            <p>Oops! No items in your cart.</p>
+            <p>Oops! No item in your cart</p>
           ) : (
             basket.map((item, i) => (
               <section className={styles.cart_product} key={i}>
                 <ProductCard
-                  key={i}
                   product={item}
                   renderDesc={true}
                   renderAdd={false}
@@ -81,7 +80,7 @@ function Cart() {
                   >
                     <IoIosArrowUp size={20} />
                   </button>
-                  <span>{item.amount}</span>
+                  <span>{item.amount || 1}</span>
                   <button
                     className={styles.btn}
                     onClick={() => decrement(item.id)}
@@ -97,8 +96,8 @@ function Cart() {
         {basket.length !== 0 && (
           <div className={styles.subtotal}>
             <div>
-              <p>Subtotal ({basket.length} items)</p>
-              <CurrencyFormat amount={total} />
+              <p>Subtotal ({basket.length} items):</p>
+              <CurrencyFormat amount={total.toFixed(2)} />
             </div>
             <span>
               <input type="checkbox" id="giftCheckBox" />

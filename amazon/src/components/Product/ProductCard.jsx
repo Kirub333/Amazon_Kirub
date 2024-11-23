@@ -7,28 +7,17 @@ import { Type } from "../../Utility/action.type";
 import { DataContext } from "../../components/DataProvider/DataProvider";
 import { BsFillCartXFill } from "react-icons/bs";
 
-function ProductCard({
-  product,
-  flex,
-  renderDesc,
-  renderAdd,
-  showRemoveItem,
-  itemAmount,
-  total,
-}) {
+function ProductCard({ product, flex, renderDesc, renderAdd, showRemoveItem }) {
   const { image, title, id, rating, price, description } = product;
+
   const [state, dispatch] = useContext(DataContext);
 
   const addToCart = () => {
     dispatch({
       type: Type.ADD_TO_BASKET,
       item: {
-        image,
-        title,
-        id,
-        rating,
-        price,
-        description,
+        ...product,
+        amount: 1,
       },
     });
   };
@@ -64,32 +53,24 @@ function ProductCard({
           }}
         >
           <CurrencyFormat amount={price} />
-          {itemAmount && (
-            <p style={{ fontWeight: "500", color: "var(--primary-color)" }}>
-              Quantity: {itemAmount}
-            </p>
-          )}
-          {total && (
-            <p style={{ fontWeight: "500", color: "var(--primary-color)" }}>
-              Total: ${price * itemAmount}
-            </p>
-          )}
-          {showRemoveItem && (
-            <button
-              className={classes.button}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "7px",
-                padding: "5px",
-              }}
-              onClick={removeItemImmediately}
-            >
-              <BsFillCartXFill size={20} />
-              Remove Item
-            </button>
-          )}
+          <div>
+            {showRemoveItem && (
+              <button
+                className={classes.button}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "7px",
+                  padding: "5px",
+                }}
+                onClick={removeItemImmediately}
+              >
+                <BsFillCartXFill size={20} />
+                Remove Item
+              </button>
+            )}
+          </div>
         </div>
         {renderAdd && (
           <button className={classes.button} onClick={addToCart}>

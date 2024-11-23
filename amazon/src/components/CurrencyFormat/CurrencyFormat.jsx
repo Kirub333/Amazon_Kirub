@@ -1,10 +1,7 @@
-import React from 'react'
-import numeral from 'numeral'
+import React from "react";
 
-
-const CurrencyFormat =({amount})=>{
-   const formattedAmount = numeral(amount).format("$0,0.00")
-   return <div>{formattedAmount}</div>
+function CurrencyFormat({ amount }) {
+  return <p>${amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}</p>;
 }
 
-export default CurrencyFormat
+export default CurrencyFormat;
