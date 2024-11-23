@@ -7,16 +7,18 @@ import { BiCart } from "react-icons/bi";
 import LowerHeader from "./LowerHeader";
 import { Link } from "react-router-dom";
 import { DataContext } from "../DataProvider/DataProvider";
-import { Type } from "../../Utility/action.type";
 
 function Header() {
-  const [{ basket }, dispatch] = useContext(DataContext);
+  const [{ basket }] = useContext(DataContext);
+
+  // Calculate the total number of items in the cart
+  const totalItems = basket.reduce((count, item) => count + item.amount, 0);
 
   return (
     <section className={classes.fixed}>
       <section>
         <div className={classes.header__container}>
-          {/* logo section */}
+          {/* Logo section */}
           <div className={classes.logo__container}>
             <Link to="/">
               <img src={amazon_letter_logo} alt="amazon logo" />
@@ -31,7 +33,8 @@ function Header() {
               </div>
             </div>
           </div>
-          {/* search section */}
+
+          {/* Search section */}
           <div className={classes.search}>
             <select name="" id="">
               <option value="">All</option>
@@ -45,20 +48,19 @@ function Header() {
             <input type="text" />
             <BsSearch size={25} />
           </div>
-          {/* other section */}
+
+          {/* Cart and other sections */}
           <div className={classes.order__container}>
             <Link to="/" className={classes.language}>
               <img
                 src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1024px-Flag_of_the_United_States.svg.png"
                 alt="Flag of USA"
               />
-
               <select name="" id="">
                 <option value="">EN</option>
               </select>
             </Link>
             <Link to="">
-              {/* <a to={!user && "/auth/signIn"}> */}
               <div>
                 <p>Sign In</p>
                 <span>Account & Lists</span>
@@ -70,7 +72,7 @@ function Header() {
             </Link>
             <Link to="/cart" className={classes.cart}>
               <BiCart size={35} />
-              <span>{basket.length}</span>
+              <span>{totalItems}</span>
             </Link>
           </div>
         </div>

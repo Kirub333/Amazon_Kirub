@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import LayOut from "../../components/LayOut/LayOut";
 import { DataContext } from "../../components/DataProvider/DataProvider";
-import { Type } from "../../Utility/action.type";
 import styles from "./cart.module.css";
 import { Link } from "react-router-dom";
 import CurrencyFormat from "../../components/CurrencyFormat/CurrencyFormat";
@@ -13,20 +12,30 @@ function Cart() {
   const [{ user, basket }, dispatch] = useContext(DataContext);
 
   const total = basket.reduce(
-    (amount, item) => amount + item.price * (item.amount || 1),
+    (amount, item) => amount + item.price * item.amount,
     0
   );
 
   const increment = (item) => {
+    // Increment the item quantity by 1
     dispatch({
-      type: Type.ADD_TO_BASKET,
+      type: "ADD_TO_BASKET",
       item,
     });
   };
 
   const decrement = (id) => {
+    // Decrement the item quantity by 1
     dispatch({
-      type: Type.REMOVE_FROM_BASKET,
+      type: "REMOVE_FROM_BASKET",
+      id,
+    });
+  };
+
+  const removeItem = (id) => {
+    // Remove the item entirely
+    dispatch({
+      type: "REMOVE_ITEM_IMMEDIATELY",
       id,
     });
   };
@@ -35,79 +44,57 @@ function Cart() {
     <LayOut>
       <section className={styles.container}>
         <div className={styles.cart__container}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <h2>Hello {user?.email?.split("@")[0]}</h2>
-              <h3>Your shopping basket</h3>
-            </div>
-            <div style={{ marginRight: "10px" }}>
-              {basket.length !== 0 && (
-                <button
-                  style={{ display: "flex", gap: "5px", padding: "7px" }}
-                  className={styles.clear_all_items_btn}
-                  onClick={() => dispatch({ type: Type.EMPTY_BASKET })}
-                >
-                  <BsFillCartXFill size={20} />
-                  Clear All Items
-                </button>
-              )}
-            </div>
-          </div>
-
+          <h3>Your Shopping Basket</h3>
           <hr />
+
           {basket.length === 0 ? (
-            <p>Oops! No item in your cart</p>
+            <p>Oops! No items in your cart.</p>
           ) : (
-            basket.map((item, i) => (
-              <section className={styles.cart_product} key={i}>
+            basket.map((item) => (
+              <div key={item.id} className={styles.cart_product}>
                 <ProductCard
                   product={item}
                   renderDesc={true}
                   renderAdd={false}
                   flex={true}
-                  showRemoveItem={true}
+                  showRemoveItem={false}
                 />
                 <div className={styles.btn_container}>
                   <button
                     className={styles.btn}
-                    onClick={() => increment(item)}
+                    onClick={() => increment(item)} // Increment by 1
                   >
                     <IoIosArrowUp size={20} />
                   </button>
-                  <span>{item.amount || 1}</span>
+                  <span>{item.amount}</span>
                   <button
                     className={styles.btn}
-                    onClick={() => decrement(item.id)}
+                    onClick={() => decrement(item.id)} // Decrement by 1
                   >
                     <IoIosArrowDown size={20} />
                   </button>
+                  <button
+                    className={`${styles.btn} ${styles.remove_btn}`}
+                    onClick={() => removeItem(item.id)} // Remove item entirely
+                  >
+                    Remove Item
+                  </button>
                 </div>
-              </section>
+              </div>
             ))
           )}
-        </div>
 
-        {basket.length !== 0 && (
-          <div className={styles.subtotal}>
-            <div>
-              <p>Subtotal ({basket.length} items):</p>
+          {basket.length > 0 && (
+            <div
+              className={styles.subtotal}
+              style={{ position: "absolute", top: "20px", right: "20px" }}
+            >
+              <p>Subtotal: </p>
               <CurrencyFormat amount={total.toFixed(2)} />
+              <Link to="/payments">Proceed to Checkout</Link>
             </div>
-            <span>
-              <input type="checkbox" id="giftCheckBox" />
-              <label htmlFor="giftCheckBox">
-                <small>This order contains a gift</small>
-              </label>
-            </span>
-            <Link to="/payments">Continue to Checkout</Link>
-          </div>
-        )}
+          )}
+        </div>
       </section>
     </LayOut>
   );
