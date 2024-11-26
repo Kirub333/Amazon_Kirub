@@ -7,12 +7,22 @@ import { BiCart } from "react-icons/bi";
 import LowerHeader from "./LowerHeader";
 import { Link } from "react-router-dom";
 import { DataContext } from "../DataProvider/DataProvider";
+import { auth } from "../../Utility/firebase";
+import { Type } from "../../Utility/action.type";
 
 function Header() {
-  const [{ basket }] = useContext(DataContext);
+  const [{ user, basket }, dispatch] = useContext(DataContext);
   const totalItem = basket?.reduce((amount, item) => {
     return item.amount + amount;
   }, 0);
+
+  //sign out
+  const handleSignOutAndClearCart = () => {
+    if (user) {
+      dispatch({ type: Type.EMPTY_BASKET });
+      auth.signOut();
+    }
+  };
 
   return (
     <section className={classes.fixed}>
@@ -59,11 +69,19 @@ function Header() {
                 <option value="">EN</option>
               </select>
             </Link>
-            <Link to="">
-              {/* <a to={!user && "/auth/signIn"}> */}
+            <Link to={!user && "/auth"}>
               <div>
-                <p>Sign In</p>
-                <span>Account & Lists</span>
+                {user ? (
+                  <>
+                    <p>Hello {user?.email?.split("@")[0]}</p>
+                    <span onClick={handleSignOutAndClearCart}>Sign Out</span>
+                  </>
+                ) : (
+                  <>
+                    <p>Hello, Sign In</p>
+                    <span>Account & Lists</span>
+                  </>
+                )}
               </div>
             </Link>
             <Link to="/orders">
