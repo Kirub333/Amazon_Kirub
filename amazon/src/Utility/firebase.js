@@ -1,7 +1,7 @@
-// Import Firebase modules from the modular SDK
-import { initializeApp, getApps } from "firebase/app";
+import firebase from "firebase/compat/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import "firebase/compat/firestore";
+import "firebase/compat/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -13,14 +13,8 @@ const firebaseConfig = {
   appId: "1:413841318933:web:c30b2add782c5abe529a1c",
 };
 
-// Initialize Firebase app (only if no app is already initialized)
-let app;
-if (!getApps().length) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApps()[0];
-}
+const app = firebase.initializeApp(firebaseConfig);
 
-// Initialize Firebase services
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+export const db = app.firestore();

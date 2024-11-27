@@ -5,6 +5,7 @@ import classes from "./payment.module.css";
 import { DataContext } from "../../components/DataProvider/DataProvider";
 import CurrencyFormat from "../../components/CurrencyFormat/CurrencyFormat";
 import { ClipLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 import { Type } from "../../Utility/action.type";
 // for stripe checkout
@@ -12,18 +13,17 @@ import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 
 import { axiosInstance } from "../../API/axios";
 import { db } from "../../Utility/firebase";
-import { useNavigate } from "react-router-dom";
 
 function Payment() {
   const [{ user, basket }, dispatch] = useContext(DataContext);
 
   const [cardError, setCardError] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const navigate = useNavigate();
 
   //stripe hooks for checkout / payment confirmation
   const stripe = useStripe();
   const elements = useElements();
-  const navigate = useNavigate();
 
   const totalItem = basket?.reduce((amount, item) => {
     return item.amount + amount;
@@ -51,17 +51,15 @@ function Payment() {
         url: `/payment/create?total=${total * 100}`,
       });
 
-      console.log(response.data);
+      // console.log(response.data);
       const clientSecret = response.data?.clientPaymentSecret;
-      // 2. client side (react side confirmation)
+      // 2. client side confirmation
       const { paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           // get card data from CardElement which is used by users
           card: elements.getElement(CardElement),
         },
       });
-
-      console.log(paymentIntent);
 
       // 3. after the confirmation --> order > firestore database save, clear basket
       await db
