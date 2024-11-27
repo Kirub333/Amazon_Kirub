@@ -13,16 +13,16 @@ const Results = () => {
   const [isLoading, setisLoading] = useState(false);
 
   useEffect(() => {
-    setisLoading(true); // Start loading
+    setisLoading(true);
     axios
       .get(`${BaseURL}/products/category/${categoryName}`)
       .then((res) => {
         setResults(res.data);
-        setisLoading(false); // Stop loading after success
+        setisLoading(false);
       })
       .catch((err) => {
         console.error(err);
-        setisLoading(false); // Stop loading after error
+        setisLoading(false);
       });
   }, [categoryName]);
 

@@ -26,7 +26,6 @@ const Routing = () => {
           <Route
             path="/payments"
             element={
-              // wrap payment component by Element from stripe and provide stripe prop with a value of stripePromise and hold that in protectedRoute
               <ProtectedRoute
                 msg={"You must sign in to complete your payment."}
                 redirect={"/payments"}

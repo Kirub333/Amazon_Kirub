@@ -56,7 +56,6 @@ const Cart = () => {
                   renderDesc={true}
                   renderAdd={false}
                   flex={true}
-                  // TODO: include remove item from card functionality
                   showRemoveItem={true}
                 />
                 <div className={classes.btn_container}>

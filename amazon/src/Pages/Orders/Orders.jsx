@@ -4,7 +4,6 @@ import classes from "./orders.module.css";
 import { db } from "../../Utility/firebase";
 import { DataContext } from "../../components/DataProvider/DataProvider";
 import ProductCard from "../../components/Product/ProductCard";
-import { BiLoader } from "react-icons/bi";
 import moment from "moment";
 
 function Orders() {
@@ -37,7 +36,7 @@ function Orders() {
       <section className={classes.container}>
         <div className={classes.orders__container}>
           <h2 style={{ margin: "20px" }}>Your Orders</h2>
-          {orders?.length == 0 && (
+          {orders?.length === 0 && (
             <div style={{ padding: "20px" }}>you don't have orders yet.</div>
           )}
           {/* ordered items */}

@@ -31,7 +31,7 @@ function Auth() {
   const authHandler = async (e) => {
     e.preventDefault();
 
-    if (e.target.name.toLowerCase() == "signin") {
+    if (e.target.name.toLowerCase() === "signin") {
       setLoading({ ...loading, signIn: true });
       signInWithEmailAndPassword(auth, email, password)
         .then((userInfo) => {

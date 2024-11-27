@@ -21,7 +21,7 @@ function Payment() {
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
 
-  //stripe hooks for checkout / payment confirmation
+  //stripe hooks payment confirmation
   const stripe = useStripe();
   const elements = useElements();
 
@@ -45,18 +45,16 @@ function Payment() {
 
     try {
       setProcessing(true);
-      // 1. backend || functions ---> contact to the client secret
+      // 1. backend contact to the client secret
       const response = await axiosInstance({
         method: "POST",
         url: `/payment/create?total=${total * 100}`,
       });
 
-      // console.log(response.data);
       const clientSecret = response.data?.clientPaymentSecret;
       // 2. client side confirmation
       const { paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
-          // get card data from CardElement which is used by users
           card: elements.getElement(CardElement),
         },
       });
