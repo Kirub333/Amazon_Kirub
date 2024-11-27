@@ -12,9 +12,6 @@ if (!stripeSecret) {
 
 const stripe = require("stripe")(stripeSecret);
 
-const { onRequest } = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
-
 const app = express();
 app.use(cors({ origin: true }));
 
@@ -44,4 +41,7 @@ app.post("/payment/create", async (req, res) => {
   }
 });
 
-exports.api = onRequest(app);
+app.listen(5000, (err) => {
+  if (err) throw err;
+  console.log("Amazon Server Running");
+});

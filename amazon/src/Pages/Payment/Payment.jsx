@@ -5,24 +5,25 @@ import classes from "./payment.module.css";
 import { DataContext } from "../../components/DataProvider/DataProvider";
 import CurrencyFormat from "../../components/CurrencyFormat/CurrencyFormat";
 import { ClipLoader } from "react-spinners";
-import { useNavigate } from "react-router-dom";
+
 import { Type } from "../../Utility/action.type";
 // for stripe checkout
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 
 import { axiosInstance } from "../../API/axios";
 import { db } from "../../Utility/firebase";
+import { useNavigate } from "react-router-dom";
 
 function Payment() {
   const [{ user, basket }, dispatch] = useContext(DataContext);
 
   const [cardError, setCardError] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const navigate = useNavigate();
 
   //stripe hooks for checkout / payment confirmation
   const stripe = useStripe();
   const elements = useElements();
+  const navigate = useNavigate();
 
   const totalItem = basket?.reduce((amount, item) => {
     return item.amount + amount;
@@ -47,7 +48,7 @@ function Payment() {
       // 1. backend || functions ---> contact to the client secret
       const response = await axiosInstance({
         method: "POST",
-        url: `/payment/create?total=${total * 100}`, // coz stripe is expecting amounts deviding by 100;  when we send to stripe we *100 when we recive from it we /100
+        url: `/payment/create?total=${total * 100}`,
       });
 
       console.log(response.data);
@@ -62,7 +63,7 @@ function Payment() {
 
       console.log(paymentIntent);
 
-      // 3. after the confirmation --> order > firestore database save (make sure firstore db is enabeled in firebase project), clear basket
+      // 3. after the confirmation --> order > firestore database save, clear basket
       await db
         .collection("users")
         .doc(user.uid)
@@ -73,13 +74,10 @@ function Payment() {
           amount: paymentIntent.amount,
           created: paymentIntent.created,
         });
-      // empty the basket
-      dispatch({ type: Type.EMPTY_BASKET });
 
       setProcessing(false);
       navigate("/orders", { state: { msg: "you have placed new Order" } });
     } catch (error) {
-      // console.log(error);
       setProcessing(false);
     }
   };
@@ -124,7 +122,6 @@ function Payment() {
                   <small style={{ color: "red" }}>{cardError}</small>
                 )}
 
-                {/* CardElement: 👉 A flexible single-line input that collects all necessary card details. */}
                 <CardElement onChange={handleChange} />
 
                 {/* price */}
